@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TempMail — অস্থায়ী ইমেইল</title>
-  <meta name="description" content="বিনামূল্যে অস্থায়ী ইমেইল। সাইনআপ নেই, পাসওয়ার্ড নেই। ১০ মিনিটে মুছে যায়।" />
+  <title>NhMailBox — Temporary Email</title>
+  <meta name="description" content="Free temporary email. No signup, no password. Expires in 10 minutes." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -414,29 +414,29 @@
       <rect x="2" y="4" width="20" height="16" rx="2"/>
       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
     </svg>
-    TempMail
+    NhMailBox
   </a>
-  <span class="nav-badge">বিনামূল্যে</span>
+  <span class="nav-badge">Free</span>
 </nav>
 
 <main>
   <div class="hero">
-    <h1>অস্থায়ী ইমেইল, তাৎক্ষণিকভাবে</h1>
-    <p>সাইনআপ নেই · পাসওয়ার্ড নেই · ১০ মিনিট পর স্বয়ংক্রিয়ভাবে মুছে যায়</p>
+    <h1>Temporary Email, Instantly</h1>
+    <p>No signup · No password · Automatically deletes after 10 minutes</p>
   </div>
 
   <!-- EMAIL ADDRESS CARD -->
   <div class="card" style="margin-bottom: 12px;">
     <div class="card-body">
-      <div class="email-label">আপনার ইমেইল ঠিকানা</div>
+      <div class="email-label">Your Email Address</div>
       <div class="email-row">
-        <div class="email-address" id="emailAddr">লোড হচ্ছে...</div>
+        <div class="email-address" id="emailAddr">Loading...</div>
         <div class="btn-group">
           <button class="btn" onclick="copyEmail()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            কপি
+            Copy
           </button>
-          <button class="btn btn-icon" onclick="newEmail()" title="নতুন ইমেইল নিন">
+          <button class="btn btn-icon" onclick="newEmail()" title="Get new email">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
           </button>
         </div>
@@ -450,17 +450,17 @@
       <div class="timer-section">
         <div class="timer-left">
           <svg style="width:18px;height:18px;color:var(--text2);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span class="timer-label">বাকি সময়</span>
+          <span class="timer-label">Time Remaining</span>
           <span class="timer-display" id="timerDisplay">10:00</span>
         </div>
         <div class="timer-actions">
           <button class="btn" onclick="addTime()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            +১০ মিনিট
+            +10 Min
           </button>
           <button class="btn btn-primary" onclick="refreshInbox()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-            রিফ্রেশ
+            Refresh
           </button>
         </div>
       </div>
@@ -475,15 +475,15 @@
     <div class="inbox-header">
       <div class="inbox-title">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-        ইনবক্স
-        <span class="count-badge" id="mailCount">0 টি মেইল</span>
+        Inbox
+        <span class="count-badge" id="mailCount">0 Mails</span>
       </div>
     </div>
     <div id="inboxBody">
       <div class="empty-state">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-        <p>এখনো কোনো ইমেইল আসেনি</p>
-        <small>উপরের ঠিকানাটি কোথাও দিন — মেইল এলে এখানে দেখাবে</small>
+        <p>No emails received yet</p>
+        <small>Use the email address above — incoming messages will appear here</small>
       </div>
     </div>
   </div>
@@ -498,116 +498,220 @@
     <div class="detail-footer">
       <button class="btn" onclick="closeDetail()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        ইনবক্সে ফিরুন
+        Back to Inbox
       </button>
     </div>
   </div>
 
   <!-- HOW IT WORKS -->
   <div style="margin-top: 2.5rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
-    <p style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:1rem;">কীভাবে ব্যবহার করবেন</p>
+    <p style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:1rem;">How it works</p>
     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px;">
       <div style="padding:12px; background:var(--surface2); border-radius:var(--radius);">
         <div style="font-size:20px; margin-bottom:6px;">📋</div>
-        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">ইমেইল কপি করুন</p>
-        <p style="font-size:12px; color:var(--text2);">উপরের ঠিকানা কপি করুন</p>
+        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">Copy Email</p>
+        <p style="font-size:12px; color:var(--text2);">Copy the address above</p>
       </div>
       <div style="padding:12px; background:var(--surface2); border-radius:var(--radius);">
         <div style="font-size:20px; margin-bottom:6px;">📝</div>
-        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">যেখানে দরকার দিন</p>
-        <p style="font-size:12px; color:var(--text2);">যেকোনো সাইটে সাইনআপ করুন</p>
+        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">Use it Anywhere</p>
+        <p style="font-size:12px; color:var(--text2);">Sign up on any website</p>
       </div>
       <div style="padding:12px; background:var(--surface2); border-radius:var(--radius);">
         <div style="font-size:20px; margin-bottom:6px;">📬</div>
-        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">মেইল দেখুন</p>
-        <p style="font-size:12px; color:var(--text2);">রিফ্রেশ করলে মেইল আসবে</p>
+        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">Check Inbox</p>
+        <p style="font-size:12px; color:var(--text2);">Refresh to see emails</p>
       </div>
     </div>
   </div>
 </main>
 
 <footer>
-  <p>TempMail — আপনার গোপনীয়তা রক্ষা করে &nbsp;·&nbsp; সম্পূর্ণ বিনামূল্যে</p>
-  <p style="margin-top:4px;">Made with ❤️ using HTML, CSS &amp; JavaScript</p>
+  <p>NhMailBox — আপনার গোপনীয়তা রক্ষা করে &nbsp;·&nbsp; সম্পূর্ণ বিনামূল্যে</p>
+  <p style="margin-top:4px;">Made with ❤️ NhZone</p>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  let sid = ""; // Guerrilla Mail এর সেশন আইডি রাখার জন্য
+let sid = ""; 
 let currentEmail = "";
+let timeLeft = 600; 
+let maxTime = 600;
+let timerInterval = null;
+let autoRefreshInterval = null;
 
-// ১. নতুন Guerrilla Mail ইমেইল তৈরি করার ফাংশন
-function generateEmail() {
+function initApp() {
+    timeLeft = 600;
+    maxTime = 600;
+    updateTimerUI();
+    document.getElementById("emailAddr").innerText = "Loading...";
+    
     fetch('https://api.guerrillamail.com/ajax.php?f=get_email_address&lang=en')
     .then(response => response.json())
     .then(data => {
-        sid = data.sid_token; // সেশন টোকেনটি সেভ করে রাখা হচ্ছে ইনবক্স চেক করার জন্য
+        sid = data.sid_token;
         currentEmail = data.email_addr;
+        document.getElementById("emailAddr").innerText = currentEmail; 
         
-        // আপনার HTML-এর ইমেইল বক্সে দেখানোর জন্য (ID-টি আপনার কোড অনুযায়ী মিলিয়ে নিন)
-        document.getElementById("emailBox").value = currentEmail; 
-        
-        // ইমেইল তৈরি হওয়া মাত্রই ইনবক্স চেক করা শুরু হবে
-        startInboxChecking();
+        startTimer();
+        refreshInbox();
+        startInboxPolling();
     })
-    .catch(err => console.error("ইমেইল তৈরি করতে সমস্যা হয়েছে:", err));
+    .catch(err => {
+        console.error("Error creating email:", err);
+        document.getElementById("emailAddr").innerText = "Error! Please try again.";
+    });
 }
 
-// ২. ইনবক্স চেক করার ফাংশন
-function checkInbox() {
+function refreshInbox() {
     if (!sid) return;
 
-    // সেশন আইডি ব্যবহার করে ইনবক্সের মেইল নিয়ে আসা
     fetch(`https://api.guerrillamail.com/ajax.php?f=check_email&sid_token=${sid}&seq=0`)
     .then(response => response.json())
     .then(data => {
-        let inboxContainer = document.getElementById("inbox-list"); // আপনার ইনবক্সের ID
-        inboxContainer.innerHTML = ""; // আগের লিস্ট ক্লিয়ার করার জন্য
+        const inboxBody = document.getElementById("inboxBody");
+        const mailCount = document.getElementById("mailCount");
+        const messages = data.list || [];
 
-        let messages = data.list;
+        mailCount.innerText = `${messages.length} Mails`;
 
-        if (!messages || messages.length === 0) {
-            inboxContainer.innerHTML = "<p>কোনো মেইল আসেনি। অপেক্ষা করুন...</p>";
+        if (messages.length === 0) {
+            inboxBody.innerHTML = `
+              <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <p>No emails received yet</p>
+                <small>Use the email address above — incoming messages will appear here</small>
+              </div>`;
             return;
         }
 
-        // লুপ চালিয়ে ইনবক্সে আসা সব মেইল দেখানো
+        inboxBody.innerHTML = ""; 
+
         messages.forEach(msg => {
+            let fromName = msg.mail_from;
+            let initial = fromName.charAt(0).toUpperCase();
+            let isUnread = msg.mail_read === "0" ? "unread" : "";
+            
+            let colors = ['#185FA5', '#1D9E75', '#EF9F27', '#E24B4A', '#5a5955'];
+            let colorIdx = initial.charCodeAt(0) % colors.length;
+            let avatarColor = colors[colorIdx];
+
             let mailItem = document.createElement("div");
-            mailItem.className = "mail-item"; // আপনার সিএসএস ক্লাস অনুযায়ী
+            mailItem.className = `mail-item ${isUnread}`;
+            mailItem.onclick = () => viewMailContent(msg.mail_id);
             mailItem.innerHTML = `
-                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                    <h4><b>From:</b> ${msg.mail_from}</h4>
-                    <p><b>Subject:</b> ${msg.mail_subject}</p>
-                    <p><b>Preview:</b> ${msg.mail_excerpt}</p>
-                    <button onclick="viewMailContent('${msg.mail_id}')" style="background: #007bff; color: #fff; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;">মেইলটি পড়ুন</button>
+                <div class="mail-avatar" style="background:${avatarColor}; color:#fff;">${initial}</div>
+                <div class="mail-meta">
+                  <div class="mail-top">
+                    <span class="mail-from">${fromName}</span>
+                    <span class="mail-time">${msg.mail_time || ''}</span>
+                  </div>
+                  <div class="mail-subject">${msg.mail_subject || '(No Subject)'}</div>
+                  <div class="mail-preview">${msg.mail_excerpt || ''}</div>
                 </div>
+                ${isUnread ? '<div class="unread-dot"></div>' : ''}
             `;
-            inboxContainer.appendChild(mailItem);
+            inboxBody.appendChild(mailItem);
         });
     })
-    .catch(err => console.error("ইনবক্স রিফ্রেশ করতে সমস্যা:", err));
+    .catch(err => console.error("Error refreshing inbox:", err));
 }
 
-// ৩. প্রতি ৬ সেকেন্ড পরপর স্বয়ংক্রিয়ভাবে ইনবক্স রিফ্রেশ করার টাইমার
-function startInboxChecking() {
-    if (window.inboxInterval) clearInterval(window.inboxInterval);
-    
-    // Guerrilla Mail-এর জন্য ৫-৬ সেকেন্ডের ইন্টারভাল রাখা ভালো
-    window.inboxInterval = setInterval(checkInbox, 6000); 
-}
-
-// ৪. মেইলের মূল ভেতরের লেখা (Body) দেখার ফাংশન
 function viewMailContent(mailId) {
+    if (!sid) return;
     fetch(`https://api.guerrillamail.com/ajax.php?f=fetch_email&sid_token=${sid}&email_id=${mailId}`)
     .then(response => response.json())
     .then(mail => {
-        // মেইলের মূল মেসেজটি (HTML বা Text) পপআপ বা কোনো বক্সে দেখানোর জন্য
-        // এখানে সহজ করার জন্য alert দেওয়া হলো, আপনি সুন্দর মডাল/পপআপ ব্যবহার করতে পারেন
-        alert("মেইলের মূল মেসেজ:\n" + mail.mail_body); 
+        document.getElementById("inboxCard").style.display = "none";
+        const detailCard = document.getElementById("mailDetail");
+        detailCard.classList.add("show");
+
+        document.getElementById("detailSubject").innerText = mail.mail_subject || '(No Subject)';
+        document.getElementById("detailMeta").innerText = `From: ${mail.mail_from}  |  Time: ${mail.mail_date || ''}`;
+        
+        document.getElementById("detailBody").innerHTML = mail.mail_body;
     })
-    .catch(err => console.error("মেইল পড়তে সমস্যা হয়েছে:", err));
-}</script>
+    .catch(err => console.error("Error reading mail:", err));
+}
+
+function closeDetail() {
+    document.getElementById("mailDetail").classList.remove("show");
+    document.getElementById("inboxCard").style.display = "block";
+    refreshInbox();
+}
+
+function startInboxPolling() {
+    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+    autoRefreshInterval = setInterval(refreshInbox, 7000); 
+}
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            newEmail(); 
+            return;
+        }
+        timeLeft--;
+        updateTimerUI();
+    }, 1000);
+}
+
+function updateTimerUI() {
+    const display = document.getElementById("timerDisplay");
+    const progressFill = document.getElementById("progressFill");
+
+    let mins = Math.floor(timeLeft / 60);
+    let secs = timeLeft % 60;
+    display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    let percentage = (timeLeft / maxTime) * 100;
+    progressFill.style.width = `${percentage}%`;
+
+    display.classList.remove("warn", "danger");
+    if (timeLeft < 120) {
+        display.classList.add("danger");
+    } else if (timeLeft < 300) {
+        display.classList.add("warn");
+    }
+}
+
+function addTime() {
+    timeLeft += 600;
+    if (timeLeft > maxTime) maxTime = timeLeft; 
+    updateTimerUI();
+    showToast("+10 minutes added");
+}
+
+function newEmail() {
+    initApp();
+    closeDetail();
+    showToast("New email address generated!");
+}
+
+function copyEmail() {
+    const emailText = document.getElementById("emailAddr").innerText;
+    if (emailText === "Loading..." || !emailText) return;
+
+    navigator.clipboard.writeText(emailText).then(() => {
+        showToast("Email address copied to clipboard!");
+    }).catch(err => {
+        console.error("Error copying text:", err);
+    });
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.classList.add("show");
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+window.onload = initApp;
+</script>
 </body>
 </html>

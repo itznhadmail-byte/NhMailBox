@@ -534,192 +534,80 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const TOTAL = 600;
-  const domains = ['tempmail.xyz','quickdrop.io','throwaway.net','mailstop.org','inboxdrop.cc'];
-  const words   = ['pixel','nova','swift','echo','storm','orbit','flash','lunar','cyber','blaze'];
-  const nums    = ['42','99','007','x9','pro','dev','88','zz'];
+  let sid = ""; // Guerrilla Mail এর সেশন আইডি রাখার জন্য
+let currentEmail = "";
 
-  let elapsed = 0;
-  let extraTime = 0;
-  let emails = [];
-  let demoLoaded = false;
-  let interval;
+// ১. নতুন Guerrilla Mail ইমেইল তৈরি করার ফাংশন
+function generateEmail() {
+    fetch('https://api.guerrillamail.com/ajax.php?f=get_email_address&lang=en')
+    .then(response => response.json())
+    .then(data => {
+        sid = data.sid_token; // সেশন টোকেনটি সেভ করে রাখা হচ্ছে ইনবক্স চেক করার জন্য
+        currentEmail = data.email_addr;
+        
+        // আপনার HTML-এর ইমেইল বক্সে দেখানোর জন্য (ID-টি আপনার কোড অনুযায়ী মিলিয়ে নিন)
+        document.getElementById("emailBox").value = currentEmail; 
+        
+        // ইমেইল তৈরি হওয়া মাত্রই ইনবক্স চেক করা শুরু হবে
+        startInboxChecking();
+    })
+    .catch(err => console.error("ইমেইল তৈরি করতে সমস্যা হয়েছে:", err));
+}
 
-  /* ---------- EMAIL GEN ---------- */
-  function randomEmail() {
-    const w = words[Math.floor(Math.random() * words.length)];
-    const n = nums[Math.floor(Math.random() * nums.length)];
-    const d = domains[Math.floor(Math.random() * domains.length)];
-    return `${w}${n}@${d}`;
-  }
+// ২. ইনবক্স চেক করার ফাংশন
+function checkInbox() {
+    if (!sid) return;
 
-  function initEmail() {
-    document.getElementById('emailAddr').textContent = randomEmail();
-    emails = [];
-    demoLoaded = false;
-    elapsed = 0;
-    extraTime = 0;
-    renderInbox();
-    clearInterval(interval);
-    interval = setInterval(tick, 1000);
-    updateTimer(TOTAL);
-  }
+    // সেশন আইডি ব্যবহার করে ইনবক্সের মেইল নিয়ে আসা
+    fetch(`https://api.guerrillamail.com/ajax.php?f=check_email&sid_token=${sid}&seq=0`)
+    .then(response => response.json())
+    .then(data => {
+        let inboxContainer = document.getElementById("inbox-list"); // আপনার ইনবক্সের ID
+        inboxContainer.innerHTML = ""; // আগের লিস্ট ক্লিয়ার করার জন্য
 
-  function copyEmail() {
-    const addr = document.getElementById('emailAddr').textContent;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(addr).then(() => toast('ইমেইল কপি হয়েছে ✓'));
-    } else {
-      const el = document.createElement('textarea');
-      el.value = addr; document.body.appendChild(el);
-      el.select(); document.execCommand('copy');
-      document.body.removeChild(el);
-      toast('ইমেইল কপি হয়েছে ✓');
-    }
-  }
+        let messages = data.list;
 
-  function newEmail() {
-    if (!confirm('নতুন ইমেইল নিলে এই ইনবক্সের সব মেইল মুছে যাবে। নিশ্চিত?')) return;
-    initEmail();
-    toast('নতুন ইমেইল তৈরি হয়েছে!');
-  }
+        if (!messages || messages.length === 0) {
+            inboxContainer.innerHTML = "<p>কোনো মেইল আসেনি। অপেক্ষা করুন...</p>";
+            return;
+        }
 
-  /* ---------- TIMER ---------- */
-  function addTime() {
-    extraTime += 600;
-    toast('+১০ মিনিট যোগ হয়েছে');
-  }
+        // লুপ চালিয়ে ইনবক্সে আসা সব মেইল দেখানো
+        messages.forEach(msg => {
+            let mailItem = document.createElement("div");
+            mailItem.className = "mail-item"; // আপনার সিএসএস ক্লাস অনুযায়ী
+            mailItem.innerHTML = `
+                <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                    <h4><b>From:</b> ${msg.mail_from}</h4>
+                    <p><b>Subject:</b> ${msg.mail_subject}</p>
+                    <p><b>Preview:</b> ${msg.mail_excerpt}</p>
+                    <button onclick="viewMailContent('${msg.mail_id}')" style="background: #007bff; color: #fff; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;">মেইলটি পড়ুন</button>
+                </div>
+            `;
+            inboxContainer.appendChild(mailItem);
+        });
+    })
+    .catch(err => console.error("ইনবক্স রিফ্রেশ করতে সমস্যা:", err));
+}
 
-  function tick() {
-    elapsed++;
-    const remaining = Math.max(0, TOTAL + extraTime - elapsed);
-    updateTimer(remaining);
-    if (elapsed === 6 && !demoLoaded) loadDemoEmails();
-    if (remaining === 0) {
-      clearInterval(interval);
-      toast('⏰ ইমেইলের মেয়াদ শেষ হয়েছে!');
-    }
-  }
+// ৩. প্রতি ৬ সেকেন্ড পরপর স্বয়ংক্রিয়ভাবে ইনবক্স রিফ্রেশ করার টাইমার
+function startInboxChecking() {
+    if (window.inboxInterval) clearInterval(window.inboxInterval);
+    
+    // Guerrilla Mail-এর জন্য ৫-৬ সেকেন্ডের ইন্টারভাল রাখা ভালো
+    window.inboxInterval = setInterval(checkInbox, 6000); 
+}
 
-  function updateTimer(remaining) {
-    const m = Math.floor(remaining / 60);
-    const s = remaining % 60;
-    const display = document.getElementById('timerDisplay');
-    display.textContent = `${m}:${String(s).padStart(2, '0')}`;
-    const total = TOTAL + extraTime;
-    const pct = Math.round((remaining / total) * 100);
-    const fill = document.getElementById('progressFill');
-    fill.style.width = pct + '%';
-    if (remaining <= 120) {
-      display.className = 'timer-display danger';
-      fill.style.background = 'var(--red)';
-    } else if (remaining <= 300) {
-      display.className = 'timer-display warn';
-      fill.style.background = 'var(--amber)';
-    } else {
-      display.className = 'timer-display';
-      fill.style.background = 'var(--green)';
-    }
-  }
-
-  /* ---------- INBOX ---------- */
-  function loadDemoEmails() {
-    demoLoaded = true;
-    emails = [
-      {
-        id: 1, from: 'GitHub', email: 'noreply@github.com',
-        subject: 'Please verify your email address',
-        preview: 'Verify your email to finish creating your GitHub account.',
-        body: 'সালাম!\n\nআপনার GitHub অ্যাকাউন্ট তৈরি করতে নিচের লিংকে ক্লিক করুন:\n\nhttps://github.com/verify?token=a7f3b2c1d0\n\nএই লিংক ২৪ ঘণ্টা পর মেয়াদ শেষ হবে।\n\n— GitHub Team',
-        time: 'এখনই', unread: true, initials: 'GH', bg: '#e6f1fb', color: '#0c447c'
-      },
-      {
-        id: 2, from: 'Google', email: 'no-reply@accounts.google.com',
-        subject: 'Security alert — new sign-in detected',
-        preview: 'A new sign-in on Chrome, Windows. Was this you?',
-        body: 'নতুন সাইন-ইন শনাক্ত হয়েছে\n\nডিভাইস: Chrome, Windows 11\nঅবস্থান: Dhaka, Bangladesh\nসময়: এইমাত্র\n\nযদি আপনি এটি করে থাকেন তাহলে এই ইমেইল উপেক্ষা করুন।\nযদি না করে থাকেন, দ্রুত আপনার পাসওয়ার্ড পরিবর্তন করুন।\n\nhttps://accounts.google.com/security',
-        time: '১ মিনিট আগে', unread: true, initials: 'G', bg: '#fcebeb', color: '#a32d2d'
-      },
-      {
-        id: 3, from: 'Daily Digest', email: 'hello@techdigest.io',
-        subject: 'Your weekly tech roundup is ready 📰',
-        preview: 'AI, open source & web dev — this week\'s top stories.',
-        body: 'এই সপ্তাহের শীর্ষ খবর:\n\n🤖 নতুন AI মডেল বেঞ্চমার্ক ভেঙেছে\n🔓 ওপেন সোর্স আন্দোলন আরও শক্তিশালী\n⚡ Web Dev ট্রেন্ড ২০২৬\n🔐 সাইবার নিরাপত্তার নতুন চ্যালেঞ্জ\n\nবিস্তারিত পড়ুন: https://techdigest.io/weekly\n\n— Tech Digest Team',
-        time: '৩ মিনিট আগে', unread: false, initials: 'TD', bg: '#e1f5ee', color: '#085041'
-      }
-    ];
-    renderInbox();
-    toast('📬 ৩টি নতুন মেইল এসেছে!');
-  }
-
-  function refreshInbox() {
-    if (!demoLoaded && elapsed >= 4) {
-      loadDemoEmails();
-    } else {
-      toast('কোনো নতুন মেইল নেই');
-    }
-  }
-
-  function renderInbox() {
-    const body = document.getElementById('inboxBody');
-    const countEl = document.getElementById('mailCount');
-    const unread = emails.filter(e => e.unread).length;
-    countEl.textContent = emails.length
-      ? `${emails.length} টি মেইল${unread > 0 ? ' · ' + unread + ' অপঠিত' : ''}`
-      : '0 টি মেইল';
-
-    if (!emails.length) {
-      body.innerHTML = `
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          <p>এখনো কোনো ইমেইল আসেনি</p>
-          <small>উপরের ঠিকানাটি কোথাও দিন — মেইল এলে এখানে দেখাবে</small>
-        </div>`;
-      return;
-    }
-
-    body.innerHTML = emails.map(e => `
-      <div class="mail-item ${e.unread ? 'unread' : ''}" onclick="openMail(${e.id})">
-        <div class="mail-avatar" style="background:${e.bg};color:${e.color}">${e.initials}</div>
-        <div class="mail-meta">
-          <div class="mail-top">
-            <span class="mail-from">${e.from}</span>
-            <span class="mail-time">${e.time}</span>
-          </div>
-          <div class="mail-subject">${e.subject}</div>
-          <div class="mail-preview">${e.preview}</div>
-        </div>
-        ${e.unread ? '<div class="unread-dot"></div>' : ''}
-      </div>`).join('');
-  }
-
-  function openMail(id) {
-    const mail = emails.find(e => e.id === id);
-    if (!mail) return;
-    mail.unread = false;
-    document.getElementById('detailSubject').textContent = mail.subject;
-    document.getElementById('detailMeta').textContent = `প্রেরক: ${mail.from} <${mail.email}>  ·  ${mail.time}`;
-    document.getElementById('detailBody').textContent = mail.body;
-    document.getElementById('mailDetail').classList.add('show');
-    document.getElementById('mailDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    renderInbox();
-  }
-
-  function closeDetail() {
-    document.getElementById('mailDetail').classList.remove('show');
-    document.getElementById('inboxCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  /* ---------- TOAST ---------- */
-  function toast(msg) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2600);
-  }
-
-  /* ---------- INIT ---------- */
-  initEmail();
-</script>
+// ৪. মেইলের মূল ভেতরের লেখা (Body) দেখার ফাংশન
+function viewMailContent(mailId) {
+    fetch(`https://api.guerrillamail.com/ajax.php?f=fetch_email&sid_token=${sid}&email_id=${mailId}`)
+    .then(response => response.json())
+    .then(mail => {
+        // মেইলের মূল মেসেজটি (HTML বা Text) পপআপ বা কোনো বক্সে দেখানোর জন্য
+        // এখানে সহজ করার জন্য alert দেওয়া হলো, আপনি সুন্দর মডাল/পপআপ ব্যবহার করতে পারেন
+        alert("মেইলের মূল মেসেজ:\n" + mail.mail_body); 
+    })
+    .catch(err => console.error("মেইল পড়তে সমস্যা হয়েছে:", err));
+}</script>
 </body>
 </html>

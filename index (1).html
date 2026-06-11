@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TempMail — অস্থায়ী ইমেইল</title>
+  <meta name="description" content="বিনামূল্যে অস্থায়ী ইমেইল। সাইনআপ নেই, পাসওয়ার্ড নেই। ১০ মিনিটে মুছে যায়।" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f7f5;
+      --surface: #ffffff;
+      --surface2: #f0eeeb;
+      --border: #e2e0da;
+      --border2: #d0cdc6;
+      --text: #1a1a18;
+      --text2: #5a5955;
+      --text3: #9a9894;
+      --blue: #185FA5;
+      --blue-light: #e6f1fb;
+      --blue-text: #0c447c;
+      --green: #1D9E75;
+      --green-light: #e1f5ee;
+      --green-text: #085041;
+      --red: #E24B4A;
+      --red-light: #fcebeb;
+      --amber: #EF9F27;
+      --amber-light: #faeeda;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --surface: #242422;
+        --surface2: #2e2e2b;
+        --border: #3a3a37;
+        --border2: #4a4a46;
+        --text: #f0eeeb;
+        --text2: #a0a09a;
+        --text3: #606058;
+        --blue-light: #0c2540;
+        --blue-text: #85b7eb;
+        --green-light: #04201a;
+        --green-text: #5dcaa5;
+        --red-light: #2a1010;
+        --amber-light: #241400;
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo svg { width: 22px; height: 22px; }
+    .nav-badge {
+      font-size: 11px;
+      background: var(--green-light);
+      color: var(--green-text);
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+
+    /* MAIN LAYOUT */
+    main {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: 15px;
+      color: var(--text2);
+    }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 12px;
+    }
+    .card-body { padding: 1.25rem 1.5rem; }
+
+    /* EMAIL BOX */
+    .email-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 10px;
+    }
+    .email-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .email-address {
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      flex: 1;
+      min-width: 0;
+      word-break: break-all;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+    }
+    .btn-group { display: flex; gap: 6px; }
+
+    /* BUTTONS */
+    .btn {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 9px 14px;
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.12s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--surface2); }
+    .btn:active { transform: scale(0.97); }
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .btn-primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--blue-text); border-color: var(--blue-text); }
+    .btn-icon {
+      padding: 9px 10px;
+    }
+
+    /* TIMER */
+    .timer-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .timer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .timer-label { font-size: 13px; color: var(--text2); }
+    .timer-display {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--green);
+      min-width: 72px;
+    }
+    .timer-display.warn { color: var(--amber); }
+    .timer-display.danger { color: var(--red); }
+    .timer-actions { display: flex; gap: 6px; }
+
+    /* PROGRESS */
+    .progress-bg {
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 999px;
+      transition: width 1s linear, background 0.5s;
+    }
+
+    /* INBOX */
+    .inbox-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .inbox-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .inbox-title svg { width: 16px; height: 16px; color: var(--text2); }
+    .count-badge {
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--blue-light);
+      color: var(--blue-text);
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+
+    /* MAIL LIST */
+    .mail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 1.5rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .mail-item:last-child { border-bottom: none; }
+    .mail-item:hover { background: var(--surface2); }
+    .mail-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .mail-meta { flex: 1; min-width: 0; }
+    .mail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+    }
+    .mail-from {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 400;
+    }
+    .mail-item.unread .mail-from { font-weight: 600; }
+    .mail-time {
+      font-size: 11px;
+      color: var(--text3);
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+    .mail-subject {
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mail-preview {
+      font-size: 12px;
+      color: var(--text2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .unread-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+      margin-top: 7px;
+    }
+    .empty-state {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--text2);
+    }
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 12px;
+      opacity: 0.3;
+      display: block;
+    }
+    .empty-state p { font-size: 14px; margin-bottom: 4px; }
+    .empty-state small { font-size: 12px; color: var(--text3); }
+
+    /* MAIL DETAIL */
+    #mailDetail { display: none; }
+    #mailDetail.show { display: block; }
+    .detail-head {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-subject {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .detail-meta { font-size: 13px; color: var(--text2); }
+    .detail-body {
+      padding: 1.25rem 1.5rem;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .detail-footer {
+      padding: 0.75rem 1.5rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--text);
+      color: var(--bg);
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      white-space: nowrap;
+      z-index: 999;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 12px;
+      color: var(--text3);
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 500px) {
+      .hero h1 { font-size: 22px; }
+      .email-row { flex-direction: column; align-items: stretch; }
+      .btn-group { justify-content: flex-end; }
+      .timer-section { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/>
+      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </svg>
+    TempMail
+  </a>
+  <span class="nav-badge">বিনামূল্যে</span>
+</nav>
+
+<main>
+  <div class="hero">
+    <h1>অস্থায়ী ইমেইল, তাৎক্ষণিকভাবে</h1>
+    <p>সাইনআপ নেই · পাসওয়ার্ড নেই · ১০ মিনিট পর স্বয়ংক্রিয়ভাবে মুছে যায়</p>
+  </div>
+
+  <!-- EMAIL ADDRESS CARD -->
+  <div class="card" style="margin-bottom: 12px;">
+    <div class="card-body">
+      <div class="email-label">আপনার ইমেইল ঠিকানা</div>
+      <div class="email-row">
+        <div class="email-address" id="emailAddr">লোড হচ্ছে...</div>
+        <div class="btn-group">
+          <button class="btn" onclick="copyEmail()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            কপি
+          </button>
+          <button class="btn btn-icon" onclick="newEmail()" title="নতুন ইমেইল নিন">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMER CARD -->
+  <div class="card" style="margin-bottom: 20px;">
+    <div class="card-body">
+      <div class="timer-section">
+        <div class="timer-left">
+          <svg style="width:18px;height:18px;color:var(--text2);flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="timer-label">বাকি সময়</span>
+          <span class="timer-display" id="timerDisplay">10:00</span>
+        </div>
+        <div class="timer-actions">
+          <button class="btn" onclick="addTime()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            +১০ মিনিট
+          </button>
+          <button class="btn btn-primary" onclick="refreshInbox()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+            রিফ্রেশ
+          </button>
+        </div>
+      </div>
+      <div class="progress-bg">
+        <div class="progress-fill" id="progressFill" style="width:100%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INBOX CARD -->
+  <div class="card" id="inboxCard">
+    <div class="inbox-header">
+      <div class="inbox-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        ইনবক্স
+        <span class="count-badge" id="mailCount">0 টি মেইল</span>
+      </div>
+    </div>
+    <div id="inboxBody">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <p>এখনো কোনো ইমেইল আসেনি</p>
+        <small>উপরের ঠিকানাটি কোথাও দিন — মেইল এলে এখানে দেখাবে</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIL DETAIL -->
+  <div class="card" id="mailDetail">
+    <div class="detail-head">
+      <div class="detail-subject" id="detailSubject"></div>
+      <div class="detail-meta" id="detailMeta"></div>
+    </div>
+    <div class="detail-body" id="detailBody"></div>
+    <div class="detail-footer">
+      <button class="btn" onclick="closeDetail()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        ইনবক্সে ফিরুন
+      </button>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div style="margin-top: 2.5rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
+    <p style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:1rem;">কীভাবে ব্যবহার করবেন</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px;">
+      <div style="padding:12px; background:var(--surface2); border-radius:var(--radius);">
+        <div style="font-size:20px; margin-bottom:6px;">📋</div>
+        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">ইমেইল কপি করুন</p>
+        <p style="font-size:12px; color:var(--text2);">উপরের ঠিকানা কপি করুন</p>
+      </div>
+      <div style="padding:12px; background:var(--surface2); border-radius:var(--radius);">
+        <div style="font-size:20px; margin-bottom:6px;">📝</div>
+        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">যেখানে দরকার দিন</p>
+        <p style="font-size:12px; color:var(--text2);">যেকোনো সাইটে সাইনআপ করুন</p>
+      </div>
+      <div style="padding:12px; background:var(--surface2); border-radius:var(--radius);">
+        <div style="font-size:20px; margin-bottom:6px;">📬</div>
+        <p style="font-size:13px; font-weight:500; color:var(--text); margin-bottom:2px;">মেইল দেখুন</p>
+        <p style="font-size:12px; color:var(--text2);">রিফ্রেশ করলে মেইল আসবে</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>TempMail — আপনার গোপনীয়তা রক্ষা করে &nbsp;·&nbsp; সম্পূর্ণ বিনামূল্যে</p>
+  <p style="margin-top:4px;">Made with ❤️ using HTML, CSS &amp; JavaScript</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const TOTAL = 600;
+  const domains = ['tempmail.xyz','quickdrop.io','throwaway.net','mailstop.org','inboxdrop.cc'];
+  const words   = ['pixel','nova','swift','echo','storm','orbit','flash','lunar','cyber','blaze'];
+  const nums    = ['42','99','007','x9','pro','dev','88','zz'];
+
+  let elapsed = 0;
+  let extraTime = 0;
+  let emails = [];
+  let demoLoaded = false;
+  let interval;
+
+  /* ---------- EMAIL GEN ---------- */
+  function randomEmail() {
+    const w = words[Math.floor(Math.random() * words.length)];
+    const n = nums[Math.floor(Math.random() * nums.length)];
+    const d = domains[Math.floor(Math.random() * domains.length)];
+    return `${w}${n}@${d}`;
+  }
+
+  function initEmail() {
+    document.getElementById('emailAddr').textContent = randomEmail();
+    emails = [];
+    demoLoaded = false;
+    elapsed = 0;
+    extraTime = 0;
+    renderInbox();
+    clearInterval(interval);
+    interval = setInterval(tick, 1000);
+    updateTimer(TOTAL);
+  }
+
+  function copyEmail() {
+    const addr = document.getElementById('emailAddr').textContent;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(addr).then(() => toast('ইমেইল কপি হয়েছে ✓'));
+    } else {
+      const el = document.createElement('textarea');
+      el.value = addr; document.body.appendChild(el);
+      el.select(); document.execCommand('copy');
+      document.body.removeChild(el);
+      toast('ইমেইল কপি হয়েছে ✓');
+    }
+  }
+
+  function newEmail() {
+    if (!confirm('নতুন ইমেইল নিলে এই ইনবক্সের সব মেইল মুছে যাবে। নিশ্চিত?')) return;
+    initEmail();
+    toast('নতুন ইমেইল তৈরি হয়েছে!');
+  }
+
+  /* ---------- TIMER ---------- */
+  function addTime() {
+    extraTime += 600;
+    toast('+১০ মিনিট যোগ হয়েছে');
+  }
+
+  function tick() {
+    elapsed++;
+    const remaining = Math.max(0, TOTAL + extraTime - elapsed);
+    updateTimer(remaining);
+    if (elapsed === 6 && !demoLoaded) loadDemoEmails();
+    if (remaining === 0) {
+      clearInterval(interval);
+      toast('⏰ ইমেইলের মেয়াদ শেষ হয়েছে!');
+    }
+  }
+
+  function updateTimer(remaining) {
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    const display = document.getElementById('timerDisplay');
+    display.textContent = `${m}:${String(s).padStart(2, '0')}`;
+    const total = TOTAL + extraTime;
+    const pct = Math.round((remaining / total) * 100);
+    const fill = document.getElementById('progressFill');
+    fill.style.width = pct + '%';
+    if (remaining <= 120) {
+      display.className = 'timer-display danger';
+      fill.style.background = 'var(--red)';
+    } else if (remaining <= 300) {
+      display.className = 'timer-display warn';
+      fill.style.background = 'var(--amber)';
+    } else {
+      display.className = 'timer-display';
+      fill.style.background = 'var(--green)';
+    }
+  }
+
+  /* ---------- INBOX ---------- */
+  function loadDemoEmails() {
+    demoLoaded = true;
+    emails = [
+      {
+        id: 1, from: 'GitHub', email: 'noreply@github.com',
+        subject: 'Please verify your email address',
+        preview: 'Verify your email to finish creating your GitHub account.',
+        body: 'সালাম!\n\nআপনার GitHub অ্যাকাউন্ট তৈরি করতে নিচের লিংকে ক্লিক করুন:\n\nhttps://github.com/verify?token=a7f3b2c1d0\n\nএই লিংক ২৪ ঘণ্টা পর মেয়াদ শেষ হবে।\n\n— GitHub Team',
+        time: 'এখনই', unread: true, initials: 'GH', bg: '#e6f1fb', color: '#0c447c'
+      },
+      {
+        id: 2, from: 'Google', email: 'no-reply@accounts.google.com',
+        subject: 'Security alert — new sign-in detected',
+        preview: 'A new sign-in on Chrome, Windows. Was this you?',
+        body: 'নতুন সাইন-ইন শনাক্ত হয়েছে\n\nডিভাইস: Chrome, Windows 11\nঅবস্থান: Dhaka, Bangladesh\nসময়: এইমাত্র\n\nযদি আপনি এটি করে থাকেন তাহলে এই ইমেইল উপেক্ষা করুন।\nযদি না করে থাকেন, দ্রুত আপনার পাসওয়ার্ড পরিবর্তন করুন।\n\nhttps://accounts.google.com/security',
+        time: '১ মিনিট আগে', unread: true, initials: 'G', bg: '#fcebeb', color: '#a32d2d'
+      },
+      {
+        id: 3, from: 'Daily Digest', email: 'hello@techdigest.io',
+        subject: 'Your weekly tech roundup is ready 📰',
+        preview: 'AI, open source & web dev — this week\'s top stories.',
+        body: 'এই সপ্তাহের শীর্ষ খবর:\n\n🤖 নতুন AI মডেল বেঞ্চমার্ক ভেঙেছে\n🔓 ওপেন সোর্স আন্দোলন আরও শক্তিশালী\n⚡ Web Dev ট্রেন্ড ২০২৬\n🔐 সাইবার নিরাপত্তার নতুন চ্যালেঞ্জ\n\nবিস্তারিত পড়ুন: https://techdigest.io/weekly\n\n— Tech Digest Team',
+        time: '৩ মিনিট আগে', unread: false, initials: 'TD', bg: '#e1f5ee', color: '#085041'
+      }
+    ];
+    renderInbox();
+    toast('📬 ৩টি নতুন মেইল এসেছে!');
+  }
+
+  function refreshInbox() {
+    if (!demoLoaded && elapsed >= 4) {
+      loadDemoEmails();
+    } else {
+      toast('কোনো নতুন মেইল নেই');
+    }
+  }
+
+  function renderInbox() {
+    const body = document.getElementById('inboxBody');
+    const countEl = document.getElementById('mailCount');
+    const unread = emails.filter(e => e.unread).length;
+    countEl.textContent = emails.length
+      ? `${emails.length} টি মেইল${unread > 0 ? ' · ' + unread + ' অপঠিত' : ''}`
+      : '0 টি মেইল';
+
+    if (!emails.length) {
+      body.innerHTML = `
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <p>এখনো কোনো ইমেইল আসেনি</p>
+          <small>উপরের ঠিকানাটি কোথাও দিন — মেইল এলে এখানে দেখাবে</small>
+        </div>`;
+      return;
+    }
+
+    body.innerHTML = emails.map(e => `
+      <div class="mail-item ${e.unread ? 'unread' : ''}" onclick="openMail(${e.id})">
+        <div class="mail-avatar" style="background:${e.bg};color:${e.color}">${e.initials}</div>
+        <div class="mail-meta">
+          <div class="mail-top">
+            <span class="mail-from">${e.from}</span>
+            <span class="mail-time">${e.time}</span>
+          </div>
+          <div class="mail-subject">${e.subject}</div>
+          <div class="mail-preview">${e.preview}</div>
+        </div>
+        ${e.unread ? '<div class="unread-dot"></div>' : ''}
+      </div>`).join('');
+  }
+
+  function openMail(id) {
+    const mail = emails.find(e => e.id === id);
+    if (!mail) return;
+    mail.unread = false;
+    document.getElementById('detailSubject').textContent = mail.subject;
+    document.getElementById('detailMeta').textContent = `প্রেরক: ${mail.from} <${mail.email}>  ·  ${mail.time}`;
+    document.getElementById('detailBody').textContent = mail.body;
+    document.getElementById('mailDetail').classList.add('show');
+    document.getElementById('mailDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    renderInbox();
+  }
+
+  function closeDetail() {
+    document.getElementById('mailDetail').classList.remove('show');
+    document.getElementById('inboxCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ---------- TOAST ---------- */
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2600);
+  }
+
+  /* ---------- INIT ---------- */
+  initEmail();
+</script>
+</body>
+</html>
